@@ -11,6 +11,7 @@ namespace BigBallGame
     class GameEngine
     {
         private static bool finished = false;
+        private static int regularCount = 0;
         private static List<Ball> AllBalls = new List<Ball>();
 
         public static void InitializeGame(PictureBox pb, int regular, int monster, int repelent)
@@ -18,6 +19,7 @@ namespace BigBallGame
             CreateBalls(pb, 0, regular);
             CreateBalls(pb, 1, monster);
             CreateBalls(pb, 2, repelent);
+            regularCount = regular;
         }
 
         private static void CreateBalls(PictureBox pb, int type, int n)
@@ -31,7 +33,7 @@ namespace BigBallGame
 
         private static void MoveAllBalls(PictureBox pb)
         {
-            foreach(Ball b in AllBalls)
+            foreach (Ball b in AllBalls)
             {
                 b.MoveBall(pb);
             }
@@ -41,6 +43,10 @@ namespace BigBallGame
         {
             MoveAllBalls(pb);
             CheckCollision();
+            if(regularCount == 0)
+            {
+                finished = true;
+            }
         }
 
         private static void CheckCollision()
@@ -68,7 +74,90 @@ namespace BigBallGame
 
         private static void CollisionLogic(Ball a, Ball b)
         {
+            switch (CollisionType(a, b))
+            {
+                case 0:
+                    if (a.Radius <= b.Radius)
+                    {
+                        b.ChangeColor(a);
+                        b.IncreaseRadius(a);
+                        AllBalls.Remove(a);
+                    }
+                    else
+                    {
+                        a.ChangeColor(b);
+                        a.IncreaseRadius(b);
+                        AllBalls.Remove(b);
+                    }
+                    regularCount--;
+                    break;
+                case 1:
+                    if(a.Type == "monster")
+                    {
+                        a.IncreaseRadius(b);
+                        AllBalls.Remove(b);
+                    }
+                    else
+                    {
+                        b.IncreaseRadius(a);
+                        AllBalls.Remove(a);
+                    }
+                    regularCount--;
+                    break;
+                case 2:
+                    if(a.Type == "repelent")
+                    {
+                        a.GetColor(b);
+                        b.ChangeDirection();
+                    }
+                    else
+                    {
+                        b.GetColor(a);
+                        a.ChangeDirection();
+                    }
+                    break;
+                case 3:
+                    a.SwapColors(b);
+                    break;
+                case 4:
+                    if(a.Type == "repelent")
+                    {
+                        if(a.Radius < 2)
+                        {
+                            AllBalls.Remove(a);
+                        }
+                        else
+                        {
+                            a.DecreaseRadius();
+                        }
+                    }
+                    else
+                    {
+                        if (a.Radius < 2)
+                        {
+                            AllBalls.Remove(b);
+                        }
+                        else
+                        {
+                            b.DecreaseRadius();
+                        }
+                    }
+                    break;
+                case 5:
+                    finished = true;
+                    break;
+            }
+        }
 
+        private static int CollisionType(Ball a, Ball b)
+        {
+            if (a.Type == "regular" && b.Type == "regular") return 0;
+            else if ((a.Type == "regular" && b.Type == "monster") || (a.Type == "monster" && b.Type == "regular")) return 1;
+            else if ((a.Type == "regular" && b.Type == "repelent") || (a.Type == "repelent" && b.Type == "regular")) return 2;
+            else if (a.Type == "repelent" && b.Type == "repelent") return 3;
+            else if ((a.Type == "repelent" && b.Type == "monster") || (a.Type == "monster" && b.Type == "repelent")) return 4;
+            else return 5;
+            
         }
     }
 }

@@ -29,6 +29,11 @@ namespace BigBallGame
             if (tmpType == 0) type = "regular";
             if (tmpType == 1) type = "monster";
             if (tmpType == 2) type = "repelent";
+            if (type == "monster")
+            {
+                dx = 0;
+                dy = 0;
+            }
         }
 
         public Ball(PictureBox pb, int tmpType)
@@ -52,11 +57,17 @@ namespace BigBallGame
                 if (tmpType2 == 1) type = "monster";
                 if (tmpType2 == 2) type = "repelent";
             }
+            if(type == "monster")
+            {
+                dx = 0;
+                dy = 0;
+            }
         }
 
         public Color Color
         {
             get { return color; }
+            private set { color = value; }
         }
 
         public Point Position
@@ -98,6 +109,44 @@ namespace BigBallGame
                 return true;
             else
                 return false;
+        }
+
+        public void IncreaseRadius(Ball b)
+        {
+            radius += b.Radius;
+        }
+
+        public void DecreaseRadius()
+        {
+            radius /= 2;
+        }
+
+        public void ChangeColor(Ball b)
+        {
+            int R = (color.R * radius + b.Color.R * b.Radius) / radius + b.Radius;
+            int G = (color.G * radius + b.Color.G * b.Radius) / radius + b.Radius;
+            int B = (color.B * radius + b.Color.B * b.Radius) / radius + b.Radius;
+
+            Color newColor = Color.FromArgb(R, G, B);
+            color = newColor;
+        }
+
+        public void GetColor(Ball b)
+        {
+            color = b.Color;
+        }
+
+        public void ChangeDirection()
+        {
+            dx *= -1;
+            dy *= -1;
+        }
+
+        public void SwapColors(Ball b)
+        {
+            Color auxColor = color;
+            color = b.Color;
+            b.Color = auxColor;
         }
     }
 }
