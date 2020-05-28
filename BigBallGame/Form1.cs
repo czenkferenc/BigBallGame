@@ -20,20 +20,6 @@ namespace BigBallGame
         private void Start_btn_Click(object sender, EventArgs e)
         {
 
-            Bitmap bmp = new Bitmap(pb.Width, pb.Height);
-            Graphics grp = Graphics.FromImage(bmp);
-            Ball a = new Ball(pb);
-            bool finished = false;
-            while(!finished)
-            {
-                grp.Clear(Color.White);
-                SolidBrush b = new SolidBrush(a.Color);
-                grp.FillEllipse(b, a.Position.X - a.Radius, a.Position.Y - a.Radius, a.Radius * 2, a.Radius * 2);
-                a.MoveBall(pb);
-                pb.Image = bmp;
-                pb.Refresh();
-                System.Threading.Thread.Sleep(20);
-            }
         }
     }
 }

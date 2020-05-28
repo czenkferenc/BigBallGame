@@ -15,12 +15,7 @@ namespace BigBallGame
         private static Color color;
         private static int dx;
         private static int dy;
-        private enum types
-        {
-            Repelent,
-            Regular,
-            monster
-        }
+        private static string type;
 
         public Ball(PictureBox pb)
         {
@@ -30,6 +25,33 @@ namespace BigBallGame
             color = Color.FromArgb(r.Next(256), r.Next(256), r.Next(256));
             dx = r.Next(-5, 5);
             dy = r.Next(-5, 5);
+            int tmpType = r.Next(3);
+            if (tmpType == 0) type = "regular";
+            if (tmpType == 1) type = "monster";
+            if (tmpType == 2) type = "repelent";
+        }
+
+        public Ball(PictureBox pb, int tmpType)
+        {
+            Random r = new Random();
+            radius = r.Next(7, 21);
+            position = new Point(r.Next(0 + radius, pb.Width - radius), r.Next(0 + radius, pb.Height - radius));
+            color = Color.FromArgb(r.Next(256), r.Next(256), r.Next(256));
+            dx = r.Next(-5, 5);
+            dy = r.Next(-5, 5);
+            if (0 <= tmpType && tmpType <= 2)
+            {
+                if (tmpType == 0) type = "regular";
+                if (tmpType == 1) type = "monster";
+                if (tmpType == 2) type = "repelent";
+            }
+            else
+            {
+                int tmpType2 = r.Next(3);
+                if (tmpType2 == 0) type = "regular";
+                if (tmpType2 == 1) type = "monster";
+                if (tmpType2 == 2) type = "repelent";
+            }
         }
 
         public Color Color
@@ -45,6 +67,11 @@ namespace BigBallGame
         public int Radius
         {
             get { return radius; }
+        }
+
+        public string Type
+        {
+            get { return type; }
         }
 
         public void MoveBall(PictureBox pb)
