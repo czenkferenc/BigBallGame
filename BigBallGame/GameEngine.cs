@@ -12,10 +12,16 @@ namespace BigBallGame
     {
         private static bool finished = false;
         private static int regularCount = 0;
-        private static List<Ball> AllBalls = new List<Ball>();
+        private static List<Ball> AllBalls;
+
+        public static bool Finished
+        {
+            get { return finished; }
+        }
 
         public static void InitializeGame(PictureBox pb, int regular, int monster, int repelent)
         {
+            AllBalls = new List<Ball>();
             CreateBalls(pb, 0, regular);
             CreateBalls(pb, 1, monster);
             CreateBalls(pb, 2, repelent);
@@ -51,9 +57,9 @@ namespace BigBallGame
 
         private static void CheckCollision()
         {
-            for (int i = 0; i < AllBalls.Count; i++)
+            for (int i = 0; i < AllBalls.Count - 1; i++)
             {
-                for (int j = i; j < AllBalls.Count; j++)
+                for (int j = i + 1; j < AllBalls.Count; j++)
                 {
                     if (IsCollision(AllBalls[i], AllBalls[j]))
                         CollisionLogic(AllBalls[i], AllBalls[j]);
@@ -92,7 +98,7 @@ namespace BigBallGame
                     regularCount--;
                     break;
                 case 1:
-                    if(a.Type == "monster")
+                    if(a.Type == 1)
                     {
                         a.IncreaseRadius(b);
                         AllBalls.Remove(b);
@@ -105,22 +111,24 @@ namespace BigBallGame
                     regularCount--;
                     break;
                 case 2:
-                    if(a.Type == "repelent")
+                    if(a.Type == 2)
                     {
                         a.GetColor(b);
+                        a.ChangeDirection();
                         b.ChangeDirection();
                     }
                     else
                     {
                         b.GetColor(a);
                         a.ChangeDirection();
+                        b.ChangeDirection();
                     }
                     break;
                 case 3:
                     a.SwapColors(b);
                     break;
                 case 4:
-                    if(a.Type == "repelent")
+                    if(a.Type == 2)
                     {
                         if(a.Radius < 2)
                         {
@@ -129,6 +137,7 @@ namespace BigBallGame
                         else
                         {
                             a.DecreaseRadius();
+                            a.ChangeDirection();
                         }
                     }
                     else
@@ -140,6 +149,7 @@ namespace BigBallGame
                         else
                         {
                             b.DecreaseRadius();
+                            b.ChangeDirection();
                         }
                     }
                     break;
@@ -151,13 +161,23 @@ namespace BigBallGame
 
         private static int CollisionType(Ball a, Ball b)
         {
-            if (a.Type == "regular" && b.Type == "regular") return 0;
-            else if ((a.Type == "regular" && b.Type == "monster") || (a.Type == "monster" && b.Type == "regular")) return 1;
-            else if ((a.Type == "regular" && b.Type == "repelent") || (a.Type == "repelent" && b.Type == "regular")) return 2;
-            else if (a.Type == "repelent" && b.Type == "repelent") return 3;
-            else if ((a.Type == "repelent" && b.Type == "monster") || (a.Type == "monster" && b.Type == "repelent")) return 4;
+            if (a.Type == 0 && b.Type == 0) return 0;
+            else if ((a.Type == 0 && b.Type == 1) || (a.Type == 1 && b.Type == 0)) return 1;
+            else if ((a.Type == 0 && b.Type == 2) || (a.Type == 2 && b.Type == 0)) return 2;
+            else if (a.Type == 2 && b.Type == 2) return 3;
+            else if ((a.Type == 2 && b.Type == 1) || (a.Type == 1 && b.Type == 2)) return 4;
             else return 5;
             
+        }
+
+        public static void DrawBalls(Graphics grp)
+        {
+            grp.Clear(Color.White);
+            foreach (Ball b in AllBalls)
+            {
+                SolidBrush brush = new SolidBrush(b.Color);
+                grp.FillEllipse(brush, b.Position.X - b.Radius, b.Position.Y - b.Radius, b.Radius * 2, b.Radius * 2);
+            }
         }
     }
 }

@@ -10,57 +10,48 @@ namespace BigBallGame
 {
     class Ball
     {
-        private static int radius;
-        private static Point position;
-        private static Color color;
-        private static int dx;
-        private static int dy;
-        private static string type;
-
+        private int radius;
+        private Point position;
+        private Color color;
+        private int dx;
+        private int dy;
+        private int type;
+        private static Random r = new Random();
         public Ball(PictureBox pb)
         {
-            Random r = new Random();
-            radius = r.Next(7, 21);
-            position = new Point(r.Next(0 + radius, pb.Width - radius), r.Next(0 + radius, pb.Height - radius));
-            color = Color.FromArgb(r.Next(256), r.Next(256), r.Next(256));
-            dx = r.Next(-5, 5);
-            dy = r.Next(-5, 5);
-            int tmpType = r.Next(3);
-            if (tmpType == 0) type = "regular";
-            if (tmpType == 1) type = "monster";
-            if (tmpType == 2) type = "repelent";
-            if (type == "monster")
+
+            this.radius = r.Next(3, 11);
+            this.position = new Point(r.Next(radius, pb.Width - radius), r.Next(radius, pb.Height - radius));
+            this.color = Color.FromArgb(r.Next(256), r.Next(256), r.Next(256));
+            this.dx = r.Next(-5, 5);
+            this.dy = r.Next(-5, 5);
+            this.type = r.Next(3);
+            if(type == 2)
             {
-                dx = 0;
-                dy = 0;
+                this.dx = 0;
+                this.dy = 0;
             }
         }
 
         public Ball(PictureBox pb, int tmpType)
         {
-            Random r = new Random();
-            radius = r.Next(7, 21);
-            position = new Point(r.Next(0 + radius, pb.Width - radius), r.Next(0 + radius, pb.Height - radius));
-            color = Color.FromArgb(r.Next(256), r.Next(256), r.Next(256));
-            dx = r.Next(-5, 5);
-            dy = r.Next(-5, 5);
+            this.radius = r.Next(7, 21);
+            this.position = new Point(r.Next(radius, pb.Width - radius), r.Next(radius, pb.Height - radius));
+            this.color = Color.FromArgb(r.Next(256), r.Next(256), r.Next(256));
+            this.dx = r.Next(-5, 5);
+            this.dy = r.Next(-5, 5);
             if (0 <= tmpType && tmpType <= 2)
             {
-                if (tmpType == 0) type = "regular";
-                if (tmpType == 1) type = "monster";
-                if (tmpType == 2) type = "repelent";
+                this.type = tmpType;
             }
             else
             {
-                int tmpType2 = r.Next(3);
-                if (tmpType2 == 0) type = "regular";
-                if (tmpType2 == 1) type = "monster";
-                if (tmpType2 == 2) type = "repelent";
+                this.type = r.Next(3);
             }
-            if(type == "monster")
+            if (type == 1)
             {
-                dx = 0;
-                dy = 0;
+                this.dx = 0;
+                this.dy = 0;
             }
         }
 
@@ -80,7 +71,7 @@ namespace BigBallGame
             get { return radius; }
         }
 
-        public string Type
+        public int Type
         {
             get { return type; }
         }
@@ -103,7 +94,7 @@ namespace BigBallGame
             }
         }
 
-        private static bool HitEdge(PictureBox pb)
+        private bool HitEdge(PictureBox pb)
         {
             if (position.X + radius >= pb.Width || position.Y + radius >= pb.Height || position.X - radius <= 0 || position.Y - radius <= 0)
                 return true;
@@ -123,9 +114,9 @@ namespace BigBallGame
 
         public void ChangeColor(Ball b)
         {
-            int R = (color.R * radius + b.Color.R * b.Radius) / radius + b.Radius;
-            int G = (color.G * radius + b.Color.G * b.Radius) / radius + b.Radius;
-            int B = (color.B * radius + b.Color.B * b.Radius) / radius + b.Radius;
+            int R = (color.R * radius + b.Color.R * b.Radius) / (radius + b.Radius);
+            int G = (color.G * radius + b.Color.G * b.Radius) / (radius + b.Radius);
+            int B = (color.B * radius + b.Color.B * b.Radius) / (radius + b.Radius);
 
             Color newColor = Color.FromArgb(R, G, B);
             color = newColor;
